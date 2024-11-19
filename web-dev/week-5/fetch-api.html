@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>week-5</title>
+</head>
+<body>
+    Posts
+
+    <script>
+        fetch("https://jsonplaceholder.typicode.com/users")
+        .then(function(res){
+            console.log(res.json());
+        })
+        // Uncomment the following lines if you want to parse and log the JSON response
+        // .then(response => response.json())
+        // .then(json => console.log(json))
+    </script>
+</body>
+</html>
