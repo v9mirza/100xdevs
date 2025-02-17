@@ -1,26 +1,23 @@
 const express = require('express');
 const app = express();
 app.use(express.json());
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = "USER_APP";
+
+
 
 const users = [];
 
-function generateToken() {
-    let options = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let token = "";
-    for (let i = 0; i < 32; i++) {
-        token += options[Math.floor(Math.random() * options.length)];
-    }
-    return token;
-}
+// function generateToken() {
+//     let options = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+//     let token = "";
+//     for (let i = 0; i < 32; i++) {
+//         token += options[Math.floor(Math.random() * options.length)];
+//     }
+//     return token;
+// }
 
 app.post("/signup", (req, res) => {
-    // Check if username and password exist in request
-    if (!req.body.username || !req.body.password) {
-        res.status(400).json({
-            message: "Username and password are required"
-        });
-        return;
-    }
 
     const username = req.body.username;
     const password = req.body.password;
@@ -42,36 +39,36 @@ console.log(users);
 
 
 app.post("/signin", (req, res) => {
-    // Check if username and password exist in request
-    if (!req.body.username || !req.body.password) {
-        res.status(400).json({
-            message: "Username and password are required"
-        });
-        return;
-    }
-
     const username = req.body.username;
     const password = req.body.password;
 
     const user = users.find(user => user.username === username && user.password === password);
-    
+
     if (user) {
-        const token = generateToken();
+        const token = jwt.sign({
+            username: user.username
+        }, JWT_SECRET);
+
         user.token = token;
-        res.json({ token });
+        res.send({
+            token
+        })
         console.log(users);
     } else {
-        res.status(403).json({
+        res.status(403).send({
             message: "Invalid username or password"
-        });
+        })
     }
-    console.log(users);
 });
 
 
 app.get("/me", (req, res) => {
     const token = req.headers.authorization;
-    const user = users.find(user => user.token === token);
+    const userDetails = jwt.verify(token, JWT_SECRET);
+
+    const username =  userDetails.username;
+    const user = users.find(user => user.username === username);
+
     if (user) {
         res.send({
             username: user.username
@@ -82,7 +79,6 @@ app.get("/me", (req, res) => {
         })
     }
 })
-
 
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
