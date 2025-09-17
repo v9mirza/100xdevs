@@ -13,8 +13,8 @@ app.post('/user/login', (req, res) => {
     res.send('login endpoint');
 });
 
-app.post('/user/courses', (req, res) => {
-    res.send(' all courses endpoint');
+app.get('/user/courses', (req, res) => {
+    res.send('all courses endpoint');
 });
 
 app.post('/user/courses/:courseId', (req, res) => {
@@ -24,6 +24,7 @@ app.post('/user/courses/:courseId', (req, res) => {
 app.get('/user/purchasedCourses', (req, res) => {
     res.send('purchased courses endpoint');
 });
+
 
 
 
