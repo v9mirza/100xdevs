@@ -1,34 +1,23 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
+require('dotenv').config()
+console.log(process.env.MONGO_URL)
+const express = require("express");
+const mongoose = require("mongoose");
 
+const { userRouter } = require("./routes/user");
+const { courseRouter } = require("./routes/course");
+const { adminRouter } = require("./routes/admin");
 const app = express();
 app.use(express.json());
 
-app.post('/user/signup', (req, res) => {
-    res.send('signup endpoint');
-});
 
-app.post('/user/login', (req, res) => {
-    res.send('login endpoint');
-});
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/course", courseRouter);
 
-app.get('/user/courses', (req, res) => {
-    res.send('all courses endpoint');
-});
+async function main() {
+    await mongoose.connect(process.env.MONGO_URL)
+    app.listen(3000);
+    console.log("listening on port 3000")
+}
 
-app.post('/user/courses/:courseId', (req, res) => {
-    res.send('purchase course endpoint');
-});
-
-app.get('/user/purchasedCourses', (req, res) => {
-    res.send('purchased courses endpoint');
-});
-
-
-
-
-
-app.listen(3000, () => {
-    console.log('Server started on port 3000');
-});
+main()
